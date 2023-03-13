@@ -1,4 +1,5 @@
 import discord
+from src.message_parser import MessageParser
 
 
 class Bot:
@@ -10,7 +11,7 @@ class Bot:
         self.ADMIN = admin
         self.APPLICATION_ID = app_id
 
-    def should_message_be_processed(self, message, client):
+    def __should_message_be_processed(self, message, client) -> bool:
         """ Takes discord message as input, and checks whether it should be processed.
             Returns True if the message should be processed.
         """
@@ -36,14 +37,24 @@ class Bot:
 
         @client.event
         async def on_message(message):
-            if not self.should_message_be_processed(message, client):
+            if not self.__should_message_be_processed(message, client):
                 return
-
-            username = str(message.author)
-            user_message = str(message.content)
-            channel = str(message.channel)
-            message_is_from_admin = username == self.ADMIN
-
-            print(username, user_message, channel, message_is_from_admin)
+            self.__handle_message(message)
 
         client.run(self.TOKEN)
+    
+    async def __handle_message(self, message):
+        """ Handle the received message.
+        """
+        # parse message
+        parser = MessageParser()
+        parsedMessage = parser.parse_message(message)
+
+        # do something based on the message type
+
+        #username = str(message.author)
+        #user_message = str(message.content)
+        #channel = str(message.channel)
+        #message_is_from_admin = username == self.ADMIN
+
+        #print(username, user_message, channel, message_is_from_admin)

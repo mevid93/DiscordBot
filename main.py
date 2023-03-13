@@ -1,4 +1,4 @@
-from bot import Bot
+from src.bot import Bot
 from dotenv import dotenv_values
 
 ENV_VAR_FILENAME = ".env"
@@ -30,5 +30,5 @@ if __name__ == "__main__":
     admin = config[ENV_VAR_ADMIN]
     app_id = config[ENV_VAR_BOT_APP_ID]
 
-
+    # run the bot
     Bot(token=token, admin=admin, app_id=app_id).run_discord_bot()
