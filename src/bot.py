@@ -1,5 +1,6 @@
 import discord
-from src.message_parser import MessageParser
+from src.command_handler import CommandHandler
+from src.command_parsers import CommandParser
 
 
 class Bot:
@@ -10,6 +11,8 @@ class Bot:
         self.TOKEN = token
         self.ADMIN = admin
         self.APPLICATION_ID = app_id
+        self.command_parser = CommandParser()
+        self.command_handler = CommandHandler()
 
     def __should_message_be_processed(self, message, client) -> bool:
         """ Takes discord message as input, and checks whether it should be processed.
@@ -39,22 +42,15 @@ class Bot:
         async def on_message(message):
             if not self.__should_message_be_processed(message, client):
                 return
-            self.__handle_message(message)
+            await self.__handle_message(message)
 
         client.run(self.TOKEN)
-    
+
     async def __handle_message(self, message):
         """ Handle the received message.
         """
-        # parse message
-        parser = MessageParser()
-        parsedMessage = parser.parse_message(message)
+        # parse bot command
+        command = self.command_parser.parse_command(message)
 
-        # do something based on the message type
-
-        #username = str(message.author)
-        #user_message = str(message.content)
-        #channel = str(message.channel)
-        #message_is_from_admin = username == self.ADMIN
-
-        #print(username, user_message, channel, message_is_from_admin)
+        # do something based on the command type
+        await self.command_handler.handle_command(command)
